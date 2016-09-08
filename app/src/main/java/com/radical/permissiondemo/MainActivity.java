@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 2;
     private Button btn_callPhone,btn_showCamera,btn_writeSdcard;
     private View mLayout;
+    private String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,19 +58,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void showCamera() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            Snackbar.make(mLayout, "Camera access is required to display the camera preview.",
-                    Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Request the permission
-                    ActivityCompat.requestPermissions(MainActivity.this,
-                            new String[]{Manifest.permission.CAMERA},
-                            MY_PERMISSIONS_REQUEST_CAMERA);
-                }
-            }).show();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.CAMERA)) {
+                // Provide an additional rationale to the user if the permission was not granted
+                // and the user would benefit from additional context for the use of the permission.
+                // Display a SnackBar with a button to request the missing permission.
+                Snackbar.make(mLayout, "Camera access is required to display the camera preview.",
+                        Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // Request the permission
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[]{Manifest.permission.CAMERA},
+                                MY_PERMISSIONS_REQUEST_CAMERA);
+                    }
+                }).show();
+
+            } else {
+                Snackbar.make(mLayout,
+                        "Permission is not available. Requesting camera permission.",
+                        Snackbar.LENGTH_SHORT).show();
+                // Request the permission. The result will be received in onRequestPermissionResult().
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_CAMERA);
+            }
         }else {
-            startCamera();
+            Log.i(TAG, "showCamera: "+"was granted");
+            // Permission is already available, start camera preview
+            Snackbar.make(mLayout,
+                    "Camera permission is available. Starting preview.",
+                    Snackbar.LENGTH_SHORT).show();
+            writeSdcard();
         }
     }
 
@@ -95,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // for ActivityCompat#requestPermissions for more details.
             return;
         } else {
+            Log.i(TAG, "testCall: "+"was granted");
             callPhone();
         }
     }
@@ -127,13 +149,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // Request for camera permission.
                 if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission has been granted. Start camera preview Activity.
-                    Snackbar.make(mLayout, "Camera permission was granted. Starting preview.",
+                    Snackbar.make(mLayout, "Call Phone permission was granted. Starting preview.",
                             Snackbar.LENGTH_SHORT)
                             .show();
                     startCamera();
                 } else {
                     // Permission request was denied.
-                    Snackbar.make(mLayout, "Camera permission request was denied.",
+                    Snackbar.make(mLayout, "Call phone permission request was denied.",
+                            Snackbar.LENGTH_SHORT)
+                            .show();
+                }
+            }
+            case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
+                // Request for camera permission.
+                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission has been granted. Start camera preview Activity.
+                    Snackbar.make(mLayout, "Write to Sdcard permission was granted. Starting.",
+                            Snackbar.LENGTH_SHORT)
+                            .show();
+                    writeSdcard();
+                } else {
+                    // Permission request was denied.
+                    Snackbar.make(mLayout, "Write external storage permission request was denied.",
                             Snackbar.LENGTH_SHORT)
                             .show();
                 }
@@ -153,5 +190,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void testSdcard() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            Snackbar.make(mLayout, "Sdcard access is required to write to external storage.",
+                    Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Request the permission
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                }
+            }).show();
+        }else {
+            Log.i(TAG, "testSdcard: "+"was granted");
+            writeSdcard();
+        }
+    }
+
+    private void writeSdcard() {
+        // TODO: 16-9-4
+        Toast.makeText(MainActivity.this, "write sdcard ", Toast.LENGTH_SHORT).show();
     }
 }
