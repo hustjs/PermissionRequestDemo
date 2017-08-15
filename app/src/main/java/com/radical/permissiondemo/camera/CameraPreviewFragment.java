@@ -116,7 +116,7 @@ public class CameraPreviewFragment extends Fragment {
     }
     
     public void onBackClick(View view){
-        if(!isAdded) return;
+        if(!isAdded()) return;
         getActivity().getSupportFragmentManager().beginTransaction()
                 .hide(CameraPreviewFragment.this)
                 .commit();
