@@ -114,4 +114,11 @@ public class CameraPreviewFragment extends Fragment {
             mCamera = null;
         }
     }
+    
+    public void onBackClick(View view){
+        if(!isAdded) return;
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .hide(CameraPreviewFragment.this)
+                .commit();
+    }
 }
