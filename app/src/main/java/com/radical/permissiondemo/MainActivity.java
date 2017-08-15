@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Snackbar.make(mLayout,
                     "Camera permission is available. Starting preview.",
                     Snackbar.LENGTH_SHORT).show();
-            writeSdcard();
+            startCamera();
         }
     }
 
