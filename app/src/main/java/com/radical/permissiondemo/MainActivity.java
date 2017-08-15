@@ -213,8 +213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     
     public void onBackClick(View view){
-        if(!isAdded()) return;
-        getActivity().getSupportFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .hide(CameraPreviewFragment.this)
                 .commit();
     }
