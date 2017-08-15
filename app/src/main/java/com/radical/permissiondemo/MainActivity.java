@@ -211,4 +211,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // TODO: 16-9-4
         Toast.makeText(MainActivity.this, "write sdcard ", Toast.LENGTH_SHORT).show();
     }
+    
+    public void onBackClick(View view){
+        if(!isAdded()) return;
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .hide(CameraPreviewFragment.this)
+                .commit();
+    }
 }
